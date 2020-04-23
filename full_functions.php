@@ -1,4 +1,60 @@
 <?php
+/* ========================================================== */
+/* TITLE CAPYBARA ------------------------------------------- */
+/* ========================================================== */
+function wp_capybara() {
+    add_menu_page( 'Custom Theme', 'Capybara', 'manage_options', 'wp_capybara', 'wp_capybara_options', 'dashicons-image-filter' );
+}
+add_action( 'admin_menu', 'wp_capybara' );
+/* ========================================================== */
+/* CORE CAPYBARA -------------------------------------------- */
+/* ========================================================== */
+function wp_capybara_options() {
+
+    if (!current_user_can('manage_options')){
+        wp_die( 'Pequeño padawan... debes utilizar la fuerza para entrar aquí.' );
+    }
+    $hidden_field_name = 'wp_capybara_data_hidden';
+    $data_field_name = 'wp_capybara_name';
+
+    $opt_val = get_option( $data_field_name );
+
+        if( isset($_POST[ $hidden_field_name ]) && $_POST[ $hidden_field_name ] == 'ruta_hidden') {
+            $opt_val = $_POST[ $data_field_name ]; update_option( $data_field_name, $opt_val );
+            echo '<div class="updated"><p><strong>Cambios guardados correctamente.</strong></p></div>';
+        } ?>
+
+    <div class="wrap">
+        <h2>Theme - Configuración</h2>
+        <style type="text/css">#wpfooter{position:relative !important;}.tooltip-giftwoo{position: relative;display: inline-block;}.tooltip-giftwoo .tooltiptext{visibility: hidden;width: 200px;background-color: black;color: #fff;text-align: center;border-radius: 6px;padding: 5px 0;position: absolute;z-index: 1;}.tooltip-giftwoo:hover .tooltiptext {visibility: visible;}.tooltip-giftwoo:after{content: "\f223";font-family: dashicons !important;}</style>
+        <form name="form1" method="post" action="">
+            <input type="hidden" name="<?php echo $hidden_field_name; ?>" value="ruta_hidden">
+
+            <div class="widget-liquid-left">
+            <p>Descripción envío:<br>
+                <textarea name="<?php echo $data_field_name; ?>" rows="10" cols="50"><?php echo $opt_val; ?></textarea>
+            </div>
+
+            <div style="width:100%;float:left;">
+                <hr />
+                <p class="submit"><input type="submit" name="Submit" class="button-primary" value="Guardar Datos" /></p>
+            </div>
+        </form>
+    </div>
+
+<?php }
+/* ========================================================== */
+/* OBTENEMOS DATOS EN FUNCION ------------------------------- */
+/* ========================================================== */
+function get_data_capybara($attr) {
+    if(empty($attr)){$attr = 'wp_capybara_name';}
+    $dbh = new wpdb( DB_USER, DB_PASSWORD, DB_NAME, DB_HOST );
+    global $table_prefix;
+    $table = $table_prefix.'options';
+    $query_link = "SELECT `option_value` FROM $table WHERE `option_name` = '". $attr ."'";
+    $res_link = $dbh->get_results( $query_link );
+    return $res_link[0]->option_value;
+}
 /******************************************************************************/
 /****** CUSTOM ELEMENTS - Marcel CL *******************************************/
 /******************************************************************************/
